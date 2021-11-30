@@ -46,7 +46,21 @@ public class MainController implements Initializable {
 	private final String serverIP = "192.168.0.23";
 	private final int port = 1593;
 	private List<PaintDTO> list;
-	private Socket socket;
+	public static Socket socket;
+	public static PaintThread thread;
+	ArrayList<PaintVO> arPt;
+	private int color;
+	public void paint(GraphicsContext g) {
+		g.setLineWidth(2.0);
+
+		for (int i = 0; i < arPt.size() - 1; i++) {
+			if (arPt.get(i).isPaintBool()) {
+				Color penColor = arPt.get(i).getColor(color);
+				g.setStroke(penColor);
+				g.strokeLine(arPt.get(i).getX(), arPt.get(i).getY(), arPt.get(i + 1).getX(), arPt.get(i + 1).getY());
+			}
+		}
+	}
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
