@@ -1,4 +1,4 @@
-package game;
+package client;
 
 import java.io.IOException;
 
@@ -8,19 +8,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class AppMain extends Application {
+public class ImgMain extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			Parent root = FXMLLoader.load(
-				getClass().getResource("Canvas.fxml")
-			);
-			Scene scene = new Scene(root);
-			primaryStage.setScene(scene);
-			primaryStage.setResizable(false);
+			Parent root = FXMLLoader.load(getClass().getResource("Img1.fxml"));
+			primaryStage.setScene(new Scene(root));
 			primaryStage.show();
-
 		} catch (IOException e) {}
 	}
 
