@@ -27,7 +27,8 @@ public class MainController implements Initializable {
 	public static MainController mc;//공유자원으로 활용할수 있도록 스태틱
 	// 전체 Client 목록
 	public static List<Client> clients;
-	
+	// 사용할 포트 번호
+	public final int SERVER_PORT = 8001;
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		btnStartStop.setOnAction((event)->{
@@ -56,10 +57,11 @@ public class MainController implements Initializable {
 			public void run() {
 				try {
 					appendText("서버 생성");
-					server = new ServerSocket(8001);
+					server = new ServerSocket(SERVER_PORT);
 					while (true) {
 						appendText("Client 연결 대기중...");
-						Socket client = server.accept();
+						Socket client = server.accept();//연결 요청을 계속 보냄
+						//엑셉트된 클라이언트의 연결정보를 address메소드를 통해 가져옴
 						String client_ip = client.getInetAddress().getHostAddress();
 						appendText(client_ip+"연결 완료");
 						Client c = new Client(client);
@@ -75,7 +77,7 @@ public class MainController implements Initializable {
 				
 			}
 		};
-		threadPool.submit(task);
+		threadPool.submit(task); //연결된 클라이언트 스레드풀에 작업이 전달됨
 		
 	}
 	
