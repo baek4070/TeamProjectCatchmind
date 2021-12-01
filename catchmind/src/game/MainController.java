@@ -35,15 +35,20 @@ public class MainController implements Initializable {
 	@FXML private Slider slider;
 	@FXML private ColorPicker pick;
 	@FXML private ProgressBar timer;
+<<<<<<< HEAD
 	private ObjectOutputStream writer;
 	private ObjectInputStream reader;
 	private List<PaintDTO> list;
 	private Socket socket;
+=======
+	
+>>>>>>> 8f9f1ced00049a734f9ba2617c3a10b7e9d09422
 	GraphicsContext gc;
 	Stage Stage;
 	ArrayList<Thread> threadList;
 	boolean isStart = true;
 	Task<Void> task;
+<<<<<<< HEAD
 	private double x1, y1, x2, y2, z1, z2;
 	private int color, thickness;
 	
@@ -66,8 +71,53 @@ public class MainController implements Initializable {
 		}).start();
 	}
 
+=======
+	private ObjectInputStream reader;
+	private ObjectOutputStream writer;
+	private final String serverIP = "192.168.0.23";
+	private final int port = 1593;
+	private List<PaintDTO> list;
+	public static Socket socket;
+	public static PaintThread thread;
+	ArrayList<PaintVO> arPt;
+	private int color;
+	public void paint(GraphicsContext g) {
+		g.setLineWidth(2.0);
+
+		for (int i = 0; i < arPt.size() - 1; i++) {
+			if (arPt.get(i).isPaintBool()) {
+				Color penColor = arPt.get(i).getColor(color);
+				g.setStroke(penColor);
+				g.strokeLine(arPt.get(i).getX(), arPt.get(i).getY(), arPt.get(i + 1).getX(), arPt.get(i + 1).getY());
+			}
+		}
+	}
+	
+>>>>>>> 8f9f1ced00049a734f9ba2617c3a10b7e9d09422
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		Runnable servertask = new Runnable() {
+			@Override
+			public void run() {
+				PaintServer paintServer = new PaintServer();
+			}
+		};
+		// 네트워크 연결
+		try {
+			socket = new Socket(serverIP, port);
+			writer = new ObjectOutputStream(socket.getOutputStream());
+			reader = new ObjectInputStream(socket.getInputStream());
+		} catch (UnknownHostException e) {
+			System.out.println("서버 찾을 수 없음");
+			e.printStackTrace();
+			System.exit(0);
+		} catch (IOException e) {
+			System.out.println("서버 연결 실패");
+			e.printStackTrace();
+			System.exit(0);
+		}
+		
+		
 		
 		initClient();
 		
@@ -179,40 +229,86 @@ public class MainController implements Initializable {
 			th.start();
 		});
 		
+<<<<<<< HEAD
 		btnBlack.setOnAction(e->{
 			gc.setStroke(Color.BLACK);
 			gc.setLineWidth(1);
 			color = 0;
+=======
+		btnStart.setOnAction(event->{
+			task = new Task<Void>() {
+
+				@Override
+				protected Void call() throws Exception {
+					for(int i=0; i<101; i++) {
+						if(task.isCancelled()) {
+							System.out.println("isCancelled");
+							break;
+						}
+						super.updateMessage(String.valueOf(i));
+						super.updateProgress(i, 100);
+						Thread.sleep(500);
+					}
+					return null;
+				}
+			};
+			timer.progressProperty().bind(
+				task.progressProperty()
+			); 
+			Thread t = new Thread(task);
+			t.setDaemon(true);
+			t.start();
+		});
+		
+		btnBlack.setOnAction(e->{
+			gc.setStroke(Color.BLACK);
+			gc.setLineWidth(1);
+>>>>>>> 8f9f1ced00049a734f9ba2617c3a10b7e9d09422
 		});
 		
 		btnRed.setOnAction(e->{
 			gc.setStroke(Color.RED);
 			gc.setLineWidth(1);
+<<<<<<< HEAD
 			color = 1;
+=======
+>>>>>>> 8f9f1ced00049a734f9ba2617c3a10b7e9d09422
 		});
 		
 		btnYellow.setOnAction(e->{
 			gc.setStroke(Color.YELLOW);
 			gc.setLineWidth(1);
+<<<<<<< HEAD
 			color = 2;
+=======
+>>>>>>> 8f9f1ced00049a734f9ba2617c3a10b7e9d09422
 		});
 		
 		btnBlue.setOnAction(e->{
 			gc.setStroke(Color.BLUE);
 			gc.setLineWidth(1);
+<<<<<<< HEAD
 			color = 3;
+=======
+>>>>>>> 8f9f1ced00049a734f9ba2617c3a10b7e9d09422
 		});
 		
 		btnGreen.setOnAction(e->{
 			gc.setStroke(Color.GREEN);
 			gc.setLineWidth(1);
+<<<<<<< HEAD
 			color = 4;
+=======
+>>>>>>> 8f9f1ced00049a734f9ba2617c3a10b7e9d09422
 		});
 		
 		btnEraser.setOnAction(e->{
 			gc.setStroke(Color.WHITE);
 			gc.setLineWidth(50);
+<<<<<<< HEAD
 			color = 5;
+=======
+>>>>>>> 8f9f1ced00049a734f9ba2617c3a10b7e9d09422
 		});
 			
 		btnClear.setOnAction(event->{
@@ -221,6 +317,7 @@ public class MainController implements Initializable {
 			slider.setValue(1);
 			gc.setLineWidth(1);
 			gc.setStroke(Color.BLACK);
+<<<<<<< HEAD
 			PaintDTO dto = new PaintDTO();
 			dto.setSignal(1);
 			try {
@@ -238,6 +335,10 @@ public class MainController implements Initializable {
 //			}
 //		});
 //		
+=======
+		});
+
+>>>>>>> 8f9f1ced00049a734f9ba2617c3a10b7e9d09422
 		slider.valueProperty().addListener((ob,oldValue,newValue)->{
 			int value = newValue.intValue();
 			double result = value/10;
@@ -251,12 +352,16 @@ public class MainController implements Initializable {
 			alert.setContentText("OK 버튼 클릭 시 게임 종료됩니다."); 
 			Optional<ButtonType> result = alert.showAndWait();
 			if(result.get() ==  ButtonType.OK) {
+<<<<<<< HEAD
 				exit();
+=======
+>>>>>>> 8f9f1ced00049a734f9ba2617c3a10b7e9d09422
 				Platform.exit();
 			}
 		});
 	}
 	
+<<<<<<< HEAD
 	public void exit() {
 		PaintDTO dto = new PaintDTO();
 		dto.setSignal(3);
@@ -273,8 +378,15 @@ public class MainController implements Initializable {
 	public Socket getSocket() {return socket;}
 	public Canvas getCanvas() {return canvas;}
 
+=======
+	
+>>>>>>> 8f9f1ced00049a734f9ba2617c3a10b7e9d09422
 		
 	
 	
 	
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 8f9f1ced00049a734f9ba2617c3a10b7e9d09422

@@ -18,7 +18,13 @@ public class ServerMain extends Application {
 			);
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
+			primaryStage.setTitle("Catchmind Server");
 			primaryStage.setScene(scene);
+			MainController server = loader.getController();
+			//stop 이 아닌 닫기버튼으로 종료하였으시 스레드가 계쏙 돌고있는걸 안전하게 종료시킨다
+			primaryStage.setOnCloseRequest(event->{
+				server.stopServer();
+			});
 			primaryStage.show();
 		} catch (IOException e) {
 			e.printStackTrace();

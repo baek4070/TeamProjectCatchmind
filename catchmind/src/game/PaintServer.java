@@ -3,6 +3,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+<<<<<<< HEAD
 import java.util.concurrent.ExecutorService;
 
 
@@ -19,6 +20,14 @@ class PaintServer {
 	
 	private final int port = 1593;
 	//private final int port = 9950;
+=======
+
+class PaintServer {
+	private ServerSocket serverSocket;
+	private List<PaintHandler> list;
+ 
+	private final int port = 1593;
+>>>>>>> 8f9f1ced00049a734f9ba2617c3a10b7e9d09422
 	
 	public PaintServer() { 
 		try {
@@ -29,8 +38,11 @@ class PaintServer {
 
 			while (true) {
 				Socket socket = serverSocket.accept();
+<<<<<<< HEAD
 				String client_ip = socket.getInetAddress().getHostAddress();
 				System.out.println(client_ip+"연결 완료");
+=======
+>>>>>>> 8f9f1ced00049a734f9ba2617c3a10b7e9d09422
 				PaintHandler handler = new PaintHandler(socket, list);
 				handler.start();
 				list.add(handler);

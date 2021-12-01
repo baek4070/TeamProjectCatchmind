@@ -45,7 +45,7 @@ public class ClientMain extends Application implements MainInterface{
 		new Thread(()->{
 			
 			try {
-				socket = new Socket("192.168.1.171",8001);
+				socket = new Socket("192.168.0.23",8001);
 				System.out.println("연결 성공");
 				thread = new MainThread();
 				thread.setDaemon(true);
