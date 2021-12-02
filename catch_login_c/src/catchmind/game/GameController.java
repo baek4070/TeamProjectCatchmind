@@ -1,11 +1,11 @@
 package catchmind.game;
 
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 import catchmind.main.ClientMain;
+import catchmind.vo.ChatVO;
 import catchmind.vo.PaintVO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -16,27 +16,39 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 
 public class GameController implements Initializable , GameInterface{
-
+	//-----그림 그리는 것과 관련된 fx:id값들-----
 	@FXML private Canvas canvas;
 	@FXML private Button btnClose, btnClear, btnEraser, btnStart,
 						 btnBlack, btnRed, btnGreen, btnBlue, btnYellow;
 	@FXML private Slider slider;
-	@FXML private ColorPicker pick;
 	@FXML private ProgressBar timer;
+	//******그림 그리는 것과 관련된 fx:id값들*******
 	
-	private List<PaintVO> list;
+	//-----채팅 과 관련된 fx:id값들-----
+	@FXML private Button btnEnter;
+	@FXML private TextField chatArea;
+	@FXML private TextArea chatResult;
+	@FXML private ListView userList;
+	//******채팅 과 관련된 fx:id값들*******
+	
+	//-----그림그리는 관련 필드 -----
 	GraphicsContext gc;
 	private int color = 0;// 기본값 0 번 검정
-	
+	private double thickness = 1; // 기본값  굴기 1 
+	//******그림그리는 관련 필드******
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		ClientMain.thread.gameController = this;
+		ClientMain.thread.gameController = this; //뭔진 모르겠는데 안꼬일려면 해야됨
+		
+//---------------------------------그림그리는 관련------------------------
 		gc = canvas.getGraphicsContext2D();
 		gc.setStroke(Color.BLACK);	
 		gc.setLineWidth(1);			
@@ -50,6 +62,7 @@ public class GameController implements Initializable , GameInterface{
 			PaintVO paint = new PaintVO(x,y);
 			paint.setSignal(2);
 			paint.setColor(color);
+			paint.setThickness(thickness);
 			ClientMain.thread.sendData(paint);
 		});
 		
@@ -59,6 +72,12 @@ public class GameController implements Initializable , GameInterface{
 			PaintVO paint = new PaintVO(x,y);
 			paint.setSignal(3);
 			paint.setColor(color);
+			paint.setThickness(thickness);
+			ClientMain.thread.sendData(paint);
+		});
+		btnClear.setOnAction(event->{
+			PaintVO paint = new PaintVO();
+			paint.setSignal(1);
 			ClientMain.thread.sendData(paint);
 		});
 		
@@ -95,16 +114,22 @@ public class GameController implements Initializable , GameInterface{
 			color = 5;
 		});
 			
-		btnClear.setOnAction(event->{
-			ResetCanvas();
-		});
 
 
 		slider.valueProperty().addListener((ob,oldValue,newValue)->{
 			int value = newValue.intValue();
-			double result = value/10;
-			gc.setLineWidth(result);
+			thickness = value/5 + 1;
 		});
+//****************************그림그리는 관련 ******************************
+		
+		
+//----------------------------채팅 관련 ----------------------------------
+		btnEnter.setOnAction(event->{
+			ChatVO chat = new ChatVO();
+		});
+		
+//****************************채팅 관련 **********************************
+		
 		//종료 버튼 액션 
 		btnClose.setOnAction(event->{
 			Alert alert = new Alert(AlertType.CONFIRMATION); 
@@ -121,41 +146,46 @@ public class GameController implements Initializable , GameInterface{
 	public void receiveData(PaintVO vo) {
 		//signal == 1 캔버스 초기화
 		if(vo.getSignal() == 1) {
-			ResetCanvas();
+			resetCanvas();//실행 resetCanvas()
 		}
 		//signal == 2 마우스 클릭
 
 		if(vo.getSignal() == 2) {
 			System.out.println("클릭 전달");
+			painting(vo);
 		}
 		//signal == 3 마우스 드래그
 		if(vo.getSignal() == 3) {
 			System.out.println("드래그 전달");
+			painting(vo);
 		}
 		
 	}
 	@Override
-	public void Painting(PaintVO vo) {
-		gc = canvas.getGraphicsContext2D();
-		for (int i = 0; i < list.size() - 1; i++) {
-			if (list.get(i).isPaintBool()) {
-				int color = list.get(i).getColor();
+	public void painting(PaintVO vo) {
+				
 				Color penColor = Color.BLACK;
-				switch(color) {
+				switch(vo.getColor()) {
 				case 0 : penColor = Color.BLACK; break;
 				case 1 : penColor = Color.RED; break;
-				case 2 : penColor = Color.BLUE; break;
-				case 3 : penColor = Color.GREEN; break;
-				case 4 : penColor = Color.YELLOW; break;
+				case 2 : penColor = Color.YELLOW; break;
+				case 3 : penColor = Color.BLUE; break;
+				case 4 : penColor = Color.GREEN; break;
 				case 5 : penColor = Color.WHITE; break;
 				}
 				gc.setStroke(penColor);
-				gc.strokeLine(list.get(i).getX(), list.get(i).getY(), list.get(i + 1).getX(), list.get(i + 1).getY());
-			}
-		}
+				gc.setLineWidth(vo.getThickness());
+				if(vo.getSignal() == 2) {
+					gc.beginPath();	//선그리기 시작
+					gc.lineTo(vo.getX(),vo.getY());
+				}else if (vo.getSignal() == 3) {
+					gc.lineTo(vo.getX(), vo.getY());
+					gc.stroke();
+				}
+			
 	}
 	@Override
-	public void ResetCanvas() {
+	public void resetCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 	}
 
