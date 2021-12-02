@@ -12,7 +12,7 @@ import catchmind.vo.PaintVO;
 
 public class Client {
 	
-	Socket client;
+	 Socket client;
 	// 로그인 완료된 회원 정보
 	MemberVO member;
 	PaintVO paint;
@@ -40,7 +40,7 @@ public class Client {
 							}
 							else if(obj instanceof PaintVO) {
 								System.out.println("그림관련 요청");
-								desposeMember((PaintVO)obj);
+								desposePaint((PaintVO)obj);
 							}
 						}
 					} 
@@ -50,15 +50,9 @@ public class Client {
 			}
 		});
 	}
-	protected void desposeMember(PaintVO obj) {
+	protected void desposePaint(PaintVO obj) {
 		System.out.println("receive PaintVO" +obj);
-		switch(obj.getSignal()) {
-			case 0 :
-				
-			break;
-		}
-		System.out.println("send PaintVO : "+obj);
-		sendData(obj);
+		MainController.sendAllClient(obj);
 	}
 
 	// 회원관련 요청 처리

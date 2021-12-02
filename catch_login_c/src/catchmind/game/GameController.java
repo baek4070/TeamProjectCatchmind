@@ -32,6 +32,7 @@ public class GameController implements Initializable , GameInterface{
 	
 	private List<PaintVO> list;
 	GraphicsContext gc;
+	private int color = 0;// 기본값 0 번 검정
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -48,10 +49,21 @@ public class GameController implements Initializable , GameInterface{
 			double y = event.getY();
 			PaintVO paint = new PaintVO(x,y);
 			paint.setSignal(2);
+			paint.setColor(color);
 			ClientMain.thread.sendData(paint);
 		});
 		
 		canvas.setOnMouseDragged(event->{
+			double x = event.getX();
+			double y = event.getY();
+			PaintVO paint = new PaintVO(x,y);
+			paint.setSignal(3);
+			paint.setColor(color);
+			ClientMain.thread.sendData(paint);
+		});
+		
+		btnStart.setOnAction(event->{
+			
 		});
 		
 		btnStart.setOnAction(event->{
@@ -59,27 +71,28 @@ public class GameController implements Initializable , GameInterface{
 		});
 		
 		btnBlack.setOnAction(e->{
+			color = 0;
 		});
-			
-			
-		btnStart.setOnAction(event->{
-		});
-		
 		
 		
 		btnRed.setOnAction(e->{
+			color = 1;
 		});
 		
 		btnYellow.setOnAction(e->{
+			color = 2;
 		});
 		
 		btnBlue.setOnAction(e->{
+			color = 3;
 		});
 		
 		btnGreen.setOnAction(e->{
+			color = 4;
 		});
 		
 		btnEraser.setOnAction(e->{
+			color = 5;
 		});
 			
 		btnClear.setOnAction(event->{
@@ -110,14 +123,14 @@ public class GameController implements Initializable , GameInterface{
 		if(vo.getSignal() == 1) {
 			ResetCanvas();
 		}
-		//signal == 2 캔버스에 그리기
+		//signal == 2 마우스 클릭
 
 		if(vo.getSignal() == 2) {
-			System.out.println("전달");
+			System.out.println("클릭 전달");
 		}
-		//signal == 3 종료 
+		//signal == 3 마우스 드래그
 		if(vo.getSignal() == 3) {
-			
+			System.out.println("드래그 전달");
 		}
 		
 	}

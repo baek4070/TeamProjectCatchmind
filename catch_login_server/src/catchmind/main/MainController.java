@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 
 import catchmind.dao.MemberDAO;
 import catchmind.dao.MemberDAOImpl;
+import catchmind.vo.PaintVO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -111,6 +112,12 @@ public class MainController implements Initializable {
 		Platform.runLater(()->{
 			txtArea.appendText(data +"\n");
 		});
+	}
+	
+	public static void sendAllClient(PaintVO obj) {
+		for(Client c : clients) {
+			c.sendData(obj);
+		}
 	}
 	
 	
