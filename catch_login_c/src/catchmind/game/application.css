@@ -26,3 +26,9 @@
 #btnEraser{
 	-fx-background-image:url(img/eraserBtnIcon.png);
 }
+#btnStart{
+	-fx-background-image:url(img/startBtnIcon.jpg);
+}
+#post{
+	-fx-background-image:url(img/post.png);
+}

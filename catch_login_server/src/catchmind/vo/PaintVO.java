@@ -19,6 +19,7 @@ public class PaintVO implements Serializable{
 	private boolean paintBool;
 	private int color;
 	private double thickness;
+	private String answer;
 	
 	public PaintVO() {
 	}
@@ -80,12 +81,19 @@ public class PaintVO implements Serializable{
 	public void setThickness(double thickness) {
 		this.thickness = thickness;
 	}
+	public String getAnswer() {
+		return answer;
+	}
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
 	//-----------게터 세터 끝 ----------------
 	@Override
 	public String toString() {
 		return "PaintVO [signal=" + signal + ", x=" + x + ", y=" + y + ", paintBool=" + paintBool + ", color=" + color
-				+ ", thickness=" + thickness + "]";
+				+ ", thickness=" + thickness + ", answer=" + answer + "]";
 	}
+	
 	
 	
 	

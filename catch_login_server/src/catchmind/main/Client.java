@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Date;
 
+import catchmind.vo.ChatVO;
 import catchmind.vo.MemberVO;
 import catchmind.vo.PaintVO;
 
@@ -14,7 +15,7 @@ public class Client {
 	
 	 Socket client;
 	// 로그인 완료된 회원 정보
-	MemberVO member;
+	public static MemberVO member;
 	PaintVO paint;
 
 	public Client(Socket client) {
@@ -41,6 +42,9 @@ public class Client {
 							else if(obj instanceof PaintVO) {
 								System.out.println("그림관련 요청");
 								desposePaint((PaintVO)obj);
+							}else if(obj instanceof ChatVO) {
+								System.out.println("채팅관련 요청");
+								desposeChat((ChatVO)obj);
 							}
 						}
 					} 
@@ -50,6 +54,26 @@ public class Client {
 			}
 		});
 	}
+	public void desposeChat(ChatVO obj) {
+		
+		switch(obj.getSignal()) {
+//		case 1 :
+//			String nick = obj.getName();
+//			MainController.user.add(nick);
+//				MainController.sendAllChat(user);
+//			break;
+		case 2 :
+			String name = obj.getName();
+			String text = obj.getText();
+			ChatVO chat = new ChatVO(name,text);
+			chat.setSignal(2);
+			MainController.sendAllChat(chat);
+			System.out.println("ChatVO : "+obj);
+		break;
+		}
+		
+	}
+	
 	protected void desposePaint(PaintVO obj) {
 		System.out.println("receive PaintVO" +obj);
 		MainController.sendAllClient(obj);
@@ -104,7 +128,7 @@ public class Client {
 		System.out.println("Client 연결 종료 : "+ip);
 		
 		synchronized (MainController.clients) {
-			MainController.clients.remove(this);	
+			MainController.clients.remove(this);
 		}
 		if(client != null && !client.isClosed()) {
 			try {

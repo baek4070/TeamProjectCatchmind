@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import catchmind.game.GameController;
+import catchmind.vo.ChatVO;
 import catchmind.vo.MemberVO;
 import catchmind.vo.PaintVO;
 
@@ -27,6 +28,8 @@ public class MainThread extends Thread{
 						memberController.receiveData((MemberVO)obj);
 					}else if(obj instanceof PaintVO) {
 						gameController.receiveData((PaintVO)obj);
+					}else if(obj instanceof ChatVO) {
+						gameController.receiveData((ChatVO)obj);
 					}
 				}
 			}

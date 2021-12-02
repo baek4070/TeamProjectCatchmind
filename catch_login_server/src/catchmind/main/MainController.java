@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 
 import catchmind.dao.MemberDAO;
 import catchmind.dao.MemberDAOImpl;
+import catchmind.vo.ChatVO;
 import catchmind.vo.PaintVO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -72,7 +73,7 @@ public class MainController implements Initializable {
 						Client c = new Client(client);
 						// 임계영역(다른 클라이언트(스레드)는 아래가 완료되기전까지 대기)
 						synchronized (clients) {
-							clients.add(c);	
+							clients.add(c);
 						}
 						appendText(clients.size()+" 생성 완료");
 					}
@@ -113,13 +114,16 @@ public class MainController implements Initializable {
 			txtArea.appendText(data +"\n");
 		});
 	}
-	
 	public static void sendAllClient(PaintVO obj) {
 		for(Client c : clients) {
 			c.sendData(obj);
 		}
 	}
 	
-	
+	public static void sendAllChat(ChatVO obj) {
+		for(Client c : clients) {
+			c.sendData(obj);
+		}
+	}
 
 }
