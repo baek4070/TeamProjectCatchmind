@@ -15,7 +15,7 @@ public class Client {
 	
 	 Socket client;
 	// 로그인 완료된 회원 정보
-	public static MemberVO member;
+	MemberVO member;
 	PaintVO paint;
 
 	public Client(Socket client) {
@@ -57,11 +57,14 @@ public class Client {
 	public void desposeChat(ChatVO obj) {
 		
 		switch(obj.getSignal()) {
-//		case 1 :
-//			String nick = obj.getName();
-//			MainController.user.add(nick);
-//				MainController.sendAllChat(user);
-//			break;
+		case 1 :
+			String user = obj.getName();
+			MainController.userlist = MainController.userlist + user+("\n");
+			ChatVO list = new ChatVO(MainController.userlist);
+			list.setSignal(1);
+			MainController.sendAllChat(list);
+			System.out.println("ChatVO 1 : "+obj);
+			break;
 		case 2 :
 			String name = obj.getName();
 			String text = obj.getText();
@@ -69,6 +72,9 @@ public class Client {
 			chat.setSignal(2);
 			MainController.sendAllChat(chat);
 			System.out.println("ChatVO : "+obj);
+		break;
+		case 5 :
+			MainController.sendAllChat(obj);
 		break;
 		}
 		
@@ -130,6 +136,19 @@ public class Client {
 		synchronized (MainController.clients) {
 			MainController.clients.remove(this);
 		}
+		
+		if(this.member != null) {
+			synchronized (MainController.userlist) {
+				// 대기실 목록에서 삭제
+				String s = this.member.getMemberName();
+				MainController.userlist = MainController.userlist.replaceFirst(s+("\n"), "");
+				ChatVO chatList = new ChatVO(MainController.userlist,3);
+				ChatVO outter = new ChatVO(s,4);
+				MainController.sendAllChat(chatList);
+				MainController.sendAllChat(outter);
+			}
+		}
+		
 		if(client != null && !client.isClosed()) {
 			try {
 				client.close();

@@ -1,3 +1,15 @@
 #loginImg{
-	-fx-background-image:url(catchmind.png);
+	-fx-background-image:url(img/catchmind.png);
+}
+
+#Pause{
+	-fx-background-image:url(img/Pause.png);
+}
+
+#Play{
+	-fx-background-image:url(img/Play.png);
+}
+
+#Stop{
+	-fx-background-image:url(img/Stop.png);
 }

@@ -2,7 +2,6 @@ package catchmind.vo;
 
 import java.io.Serializable;
 
-import javafx.scene.paint.Color;
 
 public class PaintVO implements Serializable{
 	

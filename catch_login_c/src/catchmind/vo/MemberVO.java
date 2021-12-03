@@ -1,8 +1,6 @@
 package catchmind.vo;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class MemberVO implements Serializable {
 	

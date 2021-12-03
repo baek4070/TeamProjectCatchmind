@@ -1,6 +1,8 @@
 package catchmind.game;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -26,7 +28,10 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 public class GameController implements Initializable , GameInterface{
 	//-----그림 그리는 것과 관련된 fx:id값들-----
@@ -37,12 +42,18 @@ public class GameController implements Initializable , GameInterface{
 	@FXML private ProgressBar timer;
 	@FXML private Label lblAnswer;
 	//******그림 그리는 것과 관련된 fx:id값들*******
+	//------------- BGM -------------------------
+	@FXML private Button muPlay, muPause, muStop;
 	
+	private boolean endOfMedia; // 파일의 끝까지 재생 완료를 확인할 flag
+	private Media media;		// 재생해야할 resource 정보를 저장하는 객체
+	private MediaPlayer mediaPlayer; // button을 통해 재생되는 resource를 제어하는 객체
+	//************* BGM *************************
 	//-----채팅 과 관련된 fx:id값들-----
 	@FXML private Button btnEnter;
 	@FXML private TextField chatArea;
 	@FXML private TextArea chatResult;
-	@FXML private ListView<String> userList;
+	@FXML private TextArea txtUser;
 	//******채팅 과 관련된 fx:id값들*******
 	MemberVO name = MemberController.user;
 
@@ -56,12 +67,17 @@ public class GameController implements Initializable , GameInterface{
 	private Thread t;
 	//******그림그리는 관련 필드******
 	
+	//--------문제 내는 필드 -----------
+	ArrayList<String> quiz = new ArrayList<String>(Arrays.asList(
+			"사자성어","딸기","인어공주","타이타닉","올림픽","다크서클","세종대왕","일석이조","십중팔구","터미네이터",
+			"오토바이","요리사","군인","야구","탁구","박명수","최기근"));
+	//********문제 내는 필드 ***********
+	
 	//---------------initialize 정의 시작 -----------------
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		timer.setProgress(0);//시작버튼이 작동하게 하려면 프로그래스값 초기화
 		ClientMain.thread.gameController = this; //뭔진 모르겠는데 안꼬일려면 해야됨
-		
 //---------------------------------그림그리는 관련------------------------
 		gc = canvas.getGraphicsContext2D();
 		gc.setStroke(Color.BLACK);	
@@ -73,12 +89,12 @@ public class GameController implements Initializable , GameInterface{
 		
 		btnStart.setOnAction(event->{
 			if(timer.getProgress() == 1||timer.getProgress() == 0) {//프로그래스바가 0이거나 1일때만 동작(게이지)
-			System.out.println("시작버튼 클릭 이놈이 방장");
-			PaintVO paint = new PaintVO();
-			paint.setSignal(4);
-			paint.setAnswer("이게정답");
-			ClientMain.thread.sendData(paint);
-			boss = true;
+				System.out.println("시작버튼 클릭 이놈이 방장");
+				PaintVO paint = new PaintVO();
+				paint.setSignal(4);
+				paint.setAnswer(quiz());
+				ClientMain.thread.sendData(paint);
+				boss = true;
 			}else {
 				System.out.println("이미 게임이 진행중입니다");
 			}
@@ -90,9 +106,9 @@ public class GameController implements Initializable , GameInterface{
 				PaintVO paint = new PaintVO();
 				paint.setSignal(5);
 				ClientMain.thread.sendData(paint);
-				}else {
-					System.out.println("본인이 방장이 아닙니다");
-				}
+			}else {
+				System.out.println("본인이 방장이 아닙니다");
+			}
 		});
 		
 		canvas.setOnMousePressed(event->{
@@ -169,11 +185,18 @@ public class GameController implements Initializable , GameInterface{
 		
 //----------------------------채팅 관련 ----------------------------------
 		btnEnter.setOnAction(event->{
-			
-			String text = chatArea.getText();
-			String nick = name.getMemberName();
-			ChatVO chat = new ChatVO(nick,text,2);
-			ClientMain.thread.sendData(chat);
+			if(boss == false) {
+				String text = chatArea.getText();
+				String nick = name.getMemberName();
+				ChatVO chat = new ChatVO(nick,text,2);
+				ClientMain.thread.sendData(chat);
+				if(text.equals(answer)&&(timer.getProgress() != 1||timer.getProgress() != 0)) {
+					correctAnswer();
+				}
+			}
+			if(boss == true) {
+				System.out.println("방장은 채팅불가합니다");
+			}
 			chatArea.clear();
 		});
 		
@@ -196,7 +219,97 @@ public class GameController implements Initializable , GameInterface{
 				Platform.exit();
 			}
 		});//******종료 버튼 액션 *********
+	//---------------------------- 배경음악 관련 ------------------------------
+		media = new Media(
+			getClass().getResource("media/gameBGM.wav").toString()	
+		);
+		init(media);
+		
+		
 	}//*****************initialize 정의 끝 ***********************
+	//---------------------------- 배경음악 관련  메소드 ------------------------------
+	private void correctSound() {
+		Media mediacorrect = new Media(
+				getClass().getResource("media/correct.MP3").toString()
+		);
+		MediaPlayer mediaPlayer1 = new MediaPlayer(mediacorrect);
+		mediaPlayer1.play();
+	}
+	
+	private void init(Media media) {
+		if(mediaPlayer != null) {
+			mediaPlayer.stop();
+			mediaPlayer = null;
+		}
+		mediaPlayer = new MediaPlayer(media);
+		mediaPlayer.play();
+		setMediaPlayer();
+		
+		// 재생버튼을 통해 음악실행
+		muPlay.setOnAction(event->{
+			if(endOfMedia) {
+				mediaPlayer.stop();
+			}
+			endOfMedia = false;
+			mediaPlayer.play();
+		});
+		
+		muPause.setOnAction(event->{
+			mediaPlayer.pause();
+		});
+		
+		muStop.setOnAction(event->{
+			mediaPlayer.stop();
+		});
+		
+	}
+	
+		// MediaPlayer 초기화
+	public void setMediaPlayer() {
+		// 재생 준비가 완료 되었을때
+		mediaPlayer.setOnReady(new Runnable() {
+			@Override
+			public void run() {
+				muPlay.setDisable(false);
+				muPause.setDisable(true);
+				muStop.setDisable(true);
+			}
+		});
+
+		// play 상태 일때
+		mediaPlayer.setOnPlaying(()->{
+			muPlay.setDisable(true);
+			muPause.setDisable(false);
+			muStop.setDisable(false);
+		});
+			
+		// 일시 정지
+		mediaPlayer.setOnPaused(()->{
+			muPlay.setDisable(false);
+			muPause.setDisable(true);
+			muStop.setDisable(false);
+		});
+			
+		// endOfFile
+		mediaPlayer.setOnEndOfMedia(()->{
+			endOfMedia = true;
+			mediaPlayer.stop();
+			mediaPlayer.play();
+		});
+			
+		// 중지 Stop
+		mediaPlayer.setOnStopped(()->{
+			// mediaPlayer에 등록된 미디어의 재생 시작 시간을 가져옴
+			Duration duration = mediaPlayer.getStartTime();
+			// 재생시간을 설정하는 method
+			mediaPlayer.seek(duration);
+			muPlay.setDisable(false);
+			muPause.setDisable(true);
+			muStop.setDisable(true);
+		});
+	}
+
+//**************************** 배경음악 관련  메소드 끝 *******************************
 	
 //-----------------------리시브 데이터 메소드 모음 --------------------------
 	// -----------PaintVO 객체 수신---------
@@ -220,6 +333,8 @@ public class GameController implements Initializable , GameInterface{
 		//4번 게임 시작 신호
 		if(vo.getSignal() == 4) {
 			answer = vo.getAnswer();
+			quiz.remove(answer);
+			System.out.println(quiz);
 			if(timer.getProgress() == 1||timer.getProgress() == 0) {//프로그래스바가 0이거나 1일때만 동작(게이지)
 				resetCanvas();
 				System.out.println("게임 시작!");
@@ -250,6 +365,13 @@ public class GameController implements Initializable , GameInterface{
 			
 			// 유저목록
 			if(vo.getSignal() == 1) {
+				String list = vo.getName();
+				Platform.runLater(()->{
+					txtUser.clear();
+				});
+				Platform.runLater(()->{
+					txtUser.appendText(list);
+				});
 			}
 			
 			// 채팅 view
@@ -260,8 +382,33 @@ public class GameController implements Initializable , GameInterface{
 					chatResult.appendText(name+ " : "+text+"\n");	
 				});
 			}
-			
 			if(vo.getSignal() == 3) {
+				String list = vo.getName();
+				Platform.runLater(()->{
+					txtUser.clear();
+				});
+				Platform.runLater(()->{
+					txtUser.appendText(list);
+				});
+			}
+			
+			if(vo.getSignal() == 4) {
+				String outman = vo.getName();
+				Platform.runLater(()->{
+				chatResult.appendText(outman+"님이 나갔습니다.\n");
+				});
+			}
+			if(vo.getSignal() == 5) {
+				if(timer.getProgress() != 1||timer.getProgress() != 0){
+					System.out.println("수신 정답");
+					String name = vo.getName();
+					String text = vo.getText();
+					Platform.runLater(()->{
+						chatResult.appendText("*************************\n"+name+ "님이 정답을 맞추셨습니다 !!\n*****************************\n ");
+					});
+					correctSound();//전원 정답소리 재생
+					answer = null;
+				}
 			}
 			
 		}// ***********ChatVO 객체 수신 종료***********
@@ -333,6 +480,7 @@ public class GameController implements Initializable , GameInterface{
 	}
 	
 	public void gameStop() {
+		boss = false; //그림그리기 권한 종료 
 		timer.progressProperty().unbind();
 		timer.setProgress(0);
 		resetCanvas();
@@ -341,7 +489,26 @@ public class GameController implements Initializable , GameInterface{
 		});
 	}
 	
+	public String quiz() {
+		int index = (int)(Math.random()*quiz.size());
 		
+		if(quiz.size() != 0) {
+			answer = quiz.get(index);
+			return answer;
+		}	
+		return "문제 없음";
+	}
+	public void correctAnswer() {
+		System.out.println("정답입니다 ");
+		String text = answer;
+		String nick = name.getMemberName();
+		ChatVO chat = new ChatVO(nick,text,5);
+		System.out.println(chat);
+		ClientMain.thread.sendData(chat);
+		PaintVO paint = new PaintVO();
+		paint.setSignal(5);
+		ClientMain.thread.sendData(paint);
+	}
 	
 	
 	

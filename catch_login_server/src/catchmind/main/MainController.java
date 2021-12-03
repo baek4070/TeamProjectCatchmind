@@ -35,6 +35,8 @@ public class MainController implements Initializable {
 	
 	public static MemberDAO memberDAO;
 	
+	public static String userlist = "";
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		btnStartStop.setOnAction((event)->{

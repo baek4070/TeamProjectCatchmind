@@ -1,8 +1,6 @@
 package catchmind.vo;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 // 회원 정보를 저장하고 통신에 사용할 Class
 public class MemberVO implements Serializable{

@@ -32,3 +32,21 @@
 #post{
 	-fx-background-image:url(img/post.png);
 }
+#userLi{
+	-fx-background-image:url(img/userList.png);
+}
+#btnStop{
+	-fx-background-image:url(img/stopBtnIcon.png);
+}
+#chat{
+	-fx-background-image:url(img/chat.png);
+}
+#Pause{
+	-fx-background-image:url(img/Pause.png);
+}
+#Stop{
+	-fx-background-image:url(img/Stop.png);
+}
+#Play{
+	-fx-background-image:url(img/Play.png);
+}

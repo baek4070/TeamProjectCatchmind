@@ -1,7 +1,6 @@
 package catchmind.vo;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class ChatVO implements Serializable{
 	
@@ -13,20 +12,11 @@ public class ChatVO implements Serializable{
  private String name;
  private String text;
  private int signal;
- private List<String> list;
  
 public ChatVO() {}
 
-public ChatVO(List<String> list) {
-	this.list = list;
-}
-
-public List<String> getList() {
-	return list;
-}
-
-public void setList(List<String> list) {
-	this.list = list;
+public ChatVO(String name) {
+	this.name = name;
 }
 
 public ChatVO(String name, int signal) {
