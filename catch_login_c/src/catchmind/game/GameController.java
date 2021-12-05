@@ -12,6 +12,7 @@ import catchmind.vo.ChatVO;
 import catchmind.vo.MemberVO;
 import catchmind.vo.PaintVO;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,11 +23,13 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -53,7 +56,7 @@ public class GameController implements Initializable , GameInterface{
 	@FXML private Button btnEnter;
 	@FXML private TextField chatArea;
 	@FXML private TextArea chatResult;
-	@FXML private TextArea txtUser;
+	@FXML private TableView<MemberVO> userList; // tableview로 리스트 보여주게 만듬
 	//******채팅 과 관련된 fx:id값들*******
 	MemberVO name = MemberController.user;
 
@@ -78,6 +81,10 @@ public class GameController implements Initializable , GameInterface{
 	public void initialize(URL location, ResourceBundle resources) {
 		timer.setProgress(0);//시작버튼이 작동하게 하려면 프로그래스값 초기화
 		ClientMain.thread.gameController = this; //뭔진 모르겠는데 안꼬일려면 해야됨
+		Platform.runLater(()->{			// 추가
+			chatResult.requestFocus();
+			userListService();
+		});
 //---------------------------------그림그리는 관련------------------------
 		gc = canvas.getGraphicsContext2D();
 		gc.setStroke(Color.BLACK);	
@@ -87,8 +94,8 @@ public class GameController implements Initializable , GameInterface{
 		slider.setMax(100);
 		
 		
-		btnStart.setOnAction(event->{
-			if(timer.getProgress() == 1||timer.getProgress() == 0) {//프로그래스바가 0이거나 1일때만 동작(게이지)
+		btnStart.setOnMouseClicked(event->{
+			if(event.getClickCount() == 1 && (timer.getProgress() == 1||timer.getProgress() == 0)) {//프로그래스바가 0이거나 1일때만 동작(게이지)
 				System.out.println("시작버튼 클릭 이놈이 방장");
 				PaintVO paint = new PaintVO();
 				paint.setSignal(4);
@@ -364,13 +371,10 @@ public class GameController implements Initializable , GameInterface{
 		public void receiveData(ChatVO vo) {
 			
 			// 유저목록
-			if(vo.getSignal() == 1) {
-				String list = vo.getName();
+			if(vo.getSignal() == 1) {	// 수정
 				Platform.runLater(()->{
-					txtUser.clear();
-				});
-				Platform.runLater(()->{
-					txtUser.appendText(list);
+					String name = vo.getName();
+					chatResult.appendText(name+"님이 입장하셨습니다.\n");	
 				});
 			}
 			
@@ -382,21 +386,9 @@ public class GameController implements Initializable , GameInterface{
 					chatResult.appendText(name+ " : "+text+"\n");	
 				});
 			}
-			if(vo.getSignal() == 3) {
-				String list = vo.getName();
-				Platform.runLater(()->{
-					txtUser.clear();
-				});
-				Platform.runLater(()->{
-					txtUser.appendText(list);
-				});
-			}
-			
-			if(vo.getSignal() == 4) {
+			if(vo.getSignal() == 3) {									//수정 + 4번 지움
 				String outman = vo.getName();
-				Platform.runLater(()->{
 				chatResult.appendText(outman+"님이 나갔습니다.\n");
-				});
 			}
 			if(vo.getSignal() == 5) {
 				if(timer.getProgress() != 1||timer.getProgress() != 0){
@@ -470,6 +462,7 @@ public class GameController implements Initializable , GameInterface{
 				return null;
 				
 			}
+			
 		};
 		timer.progressProperty().bind(
 			task.progressProperty()
@@ -487,6 +480,23 @@ public class GameController implements Initializable , GameInterface{
 		Platform.runLater(()->{//ui를 변경해주는거라 플랫폼 런레이터로 감싸주어야한다 
 			lblAnswer.setText("");
 		});
+	}
+	
+	private void userListService() {		// 추가
+		TableColumn<MemberVO, String> columnNum = new TableColumn<>("유저번호");
+		columnNum.setStyle("-fx-alignment:center;");
+		columnNum.setPrefWidth(55);
+		columnNum.setCellValueFactory(new PropertyValueFactory<>("memberNum"));
+		TableColumn<MemberVO, String> columnName = new TableColumn<>("닉네임");
+		columnName.setCellValueFactory(new PropertyValueFactory<>("memberName"));
+		columnName.setPrefWidth(150);
+		userList.getColumns().add(0,columnNum);
+		userList.getColumns().add(1,columnName);
+		ClientMain.thread.sendData(0);
+	}
+
+	public void receiveData(Object obj) {		// 추가
+		userList.setItems(FXCollections.observableArrayList((ArrayList<MemberVO>)obj));
 	}
 	
 	public String quiz() {

@@ -256,6 +256,10 @@ public class MemberController implements Initializable {
 					if(!isJoin) {
 						showAlert("사용할 수 없는 아이디");
 					}else {
+						Alert alert = new Alert(AlertType.INFORMATION);		// 추가
+						alert.setTitle("사용가능");
+						alert.setHeaderText("사용 가능한 아이디 입니다.");
+						alert.show();
 						btnCheck.setText("사용가능");
 					}
 				});
@@ -300,7 +304,8 @@ public class MemberController implements Initializable {
 		secondStage.close();//기존창 종료
 		Platform.runLater(()->{//게임접속시 유저목록 업데이트
 			String name = user.getMemberName();
-			ChatVO nick = new ChatVO(name,1);
+			String id = user.getMemberId();
+			ChatVO nick = new ChatVO(name,id,1);
 			ClientMain.thread.sendData(nick);
 		});
 	}
