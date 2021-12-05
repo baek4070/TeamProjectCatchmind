@@ -222,6 +222,10 @@ public class MemberController implements Initializable {
 			apa.setDisable(true);
 			Platform.runLater(()->{
 				showInfo("가입성공");
+				txtIDa.clear();
+				txtPwa.clear();
+				txtPwc.clear();
+				txtNick.clear();
 			});
 		}else {
 			Platform.runLater(()->{

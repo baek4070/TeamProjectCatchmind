@@ -82,7 +82,7 @@ public class GameController implements Initializable , GameInterface{
 		timer.setProgress(0);//시작버튼이 작동하게 하려면 프로그래스값 초기화
 		ClientMain.thread.gameController = this; //뭔진 모르겠는데 안꼬일려면 해야됨
 		Platform.runLater(()->{			// 추가
-			chatResult.requestFocus();
+			chatArea.requestFocus();
 			userListService();
 		});
 //---------------------------------그림그리는 관련------------------------
