@@ -459,6 +459,7 @@ public class GameController implements Initializable , GameInterface{
 				Platform.runLater(()->{//ui를 변경해주는거라 플랫폼 런레이터로 감싸주어야한다 
 					lblAnswer.setText("");
 				});
+				answer = null;
 				return null;
 				
 			}
@@ -477,6 +478,7 @@ public class GameController implements Initializable , GameInterface{
 		timer.progressProperty().unbind();
 		timer.setProgress(0);
 		resetCanvas();
+		answer = null;
 		Platform.runLater(()->{//ui를 변경해주는거라 플랫폼 런레이터로 감싸주어야한다 
 			lblAnswer.setText("");
 		});

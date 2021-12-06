@@ -71,18 +71,9 @@ public class Client {
 		
 		switch(obj.getSignal()) {
 		case 1 :
-<<<<<<< HEAD
-//			String user = obj.getName();
-//			MainController.userlist = MainController.userlist + user+("\n");
-//			ChatVO list = new ChatVO(MainController.userlist);
-//			list.setSignal(1);
-//			MainController.sendAllChat(list);
-//			System.out.println("ChatVO 1 : "+obj);
-=======
 			String nick = obj.getName();
 			ChatVO nickAll = new ChatVO(nick,1);
 			MainController.sendAllChat(nickAll);
->>>>>>> 37e51d86a420235fdeecb0e5be7bb55a571fcde3
 			break;
 		case 2 :
 			String name = obj.getName();
