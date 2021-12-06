@@ -8,6 +8,7 @@ import catchmind.game.GameController;
 import catchmind.vo.ChatVO;
 import catchmind.vo.MemberVO;
 import catchmind.vo.PaintVO;
+import java.util.List;
 
 public class MainThread extends Thread{
 	
@@ -30,6 +31,8 @@ public class MainThread extends Thread{
 						gameController.receiveData((PaintVO)obj);
 					}else if(obj instanceof ChatVO) {
 						gameController.receiveData((ChatVO)obj);
+					}else if(obj instanceof List<?>){
+						gameController.receiveData(obj);
 					}
 				}
 			}
