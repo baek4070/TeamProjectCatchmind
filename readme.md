@@ -12,7 +12,7 @@
   
 ## [시연영상](https://www.youtube.com/watch?v=IanBWw_WaUw) <- youtube link
   
-## 팀원 [팀페이지(노션)](https://horse-trail-213.notion.site/e15bb756e67340098fce875e0da3778b?v=9832f498586a4ea18e5ccfba25d8d711)
+## 팀원 [팀페이지(노션)](https://horse-trail-213.notion.site/322d2103b00c4956b286781958bffaf7)
 - [백인광](https://github.com/baek4070/TeamProjectCatchmind) (조장) : 프로젝트 전반 관리 및 기능구현
 - [김재관](https://github.com/1KimjaeGwan/TeamProjectCatchmind) : 게임 기능 구현(화면위주)
 - [김회진](https://github.com/930521/TeamProjectCatchmind) : 채팅기능 및 참가자 리스트 기능 구현
