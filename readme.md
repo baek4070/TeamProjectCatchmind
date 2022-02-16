@@ -9,7 +9,17 @@
 - 사용 기술 : Java 8, JavaFX, MySQL Database, Eclipse IDE,   
 - 주요 기능 : 로그인, 회원가입 ,채팅, 그림그리기, 게임 등 
 - 제작 목적 : 학습 내용을 프로젝트에 직접 적용 해봄으로써 학습 이해도를 높이고 팀원간의 협업 능력을 배양하기 위함
-  
+
+## 주요기능
+<img src="img/1.jpg"  width="700" height="370">
+<br/>
+<img src="img/2.jpg"  width="700" height="370">
+<br/>
+<img src="img/3.jpg"  width="700" height="370">
+<br/>
+<img src="img/4.jpg"  width="700" height="370">
+<br/>
+
 ## [시연영상](https://www.youtube.com/watch?v=IanBWw_WaUw) <- youtube link
   
 ## 팀원 [팀페이지(노션)](https://horse-trail-213.notion.site/322d2103b00c4956b286781958bffaf7)
