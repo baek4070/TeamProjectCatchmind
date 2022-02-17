@@ -21,6 +21,7 @@
 <br/>
 
 ## [시연영상](https://www.youtube.com/watch?v=IanBWw_WaUw) <- youtube link
+[![미리보기](https://img.youtube.com/vi/IanBWw_WaUw/0.jpg)](https://www.youtube.com/watch?v=IanBWw_WaUw)
   
 ## 팀원 [팀페이지(노션)](https://horse-trail-213.notion.site/322d2103b00c4956b286781958bffaf7)
 - [백인광](https://github.com/baek4070/TeamProjectCatchmind) (조장) : 프로젝트 전반 관리 및 기능구현
